@@ -233,16 +233,19 @@ async function checkSolution() {
       inp.className = 'sudoku-cell incorrect';
     }
   }
-  if (incorrect.size === 0) {
+  if (data.complete) {
     if (gameCompleted) return;
     gameCompleted = true;
     stopTimer();
     msg.style.color = 'var(--message-success)';
     msg.innerText = 'Congratulations! You solved it!';
     document.getElementById('completion-panel').hidden = false;
-  } else {
+  } else if (incorrect.size > 0) {
     msg.style.color = 'var(--message-error)';
     msg.innerText = 'Some cells are incorrect.';
+  } else {
+    msg.style.color = 'var(--message-error)';
+    msg.innerText = 'The puzzle is incomplete. Fill every empty cell to finish.';
   }
 }
 

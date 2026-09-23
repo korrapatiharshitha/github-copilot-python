@@ -51,6 +51,65 @@ cd starter
 python -m pytest
 ```
 
+## How Copilot Instructions Shape Contributions
+
+The repository file `.github/copilot-instructions.md` gives GitHub Copilot context and
+constraints for work in this project. Copilot uses those instructions alongside the
+code and the current request when it suggests code, answers questions, or edits files.
+They do not execute the application and they do not replace tests, code review, or
+runtime validation, but they help keep generated work consistent with the project.
+
+For this Sudoku project, the instructions tell Copilot to:
+
+- keep Sudoku generation and validation separate from Flask routes;
+- preserve existing behavior while refactoring;
+- add tests before changing game logic and run them after each feature;
+- handle invalid input consistently; and
+- keep the interface responsive, keyboard-friendly, and readable in light and dark modes.
+
+For example, a request to change solution checking should lead Copilot toward tests in
+`starter/tests/`, reusable logic in `starter/sudoku_logic.py` where appropriate, and a
+small Flask route or frontend change rather than moving all game rules into a route.
+A request to adjust the interface should account for `starter/static/styles.css`,
+keyboard focus, and both theme variants. These instructions are project guidance, so
+developers should still verify the result with the full test suite and by using the app.
+
+### Project Examples and Best Practices
+
+- Run `python -m pytest` from `starter/` after changes. Keep tests focused on observable
+	behavior, such as puzzle uniqueness, difficulty clue counts, API responses, and UI
+	contracts.
+- Keep generated puzzles and solution data separate. The Flask app stores the current
+	puzzle and solution, while the Sudoku module owns board generation, safety checks, and
+	solution counting.
+- Preserve user-facing behavior when adding features. Difficulty selection, unique
+	solutions, hints, conflict highlighting, timers, scoring, themes, and responsive
+	layout are existing contracts.
+- Treat empty cells, invalid entries, and incorrect entries as distinct states. Return
+	clear API results and show messages that tell the player what remains to be done.
+- Prefer small named functions and existing patterns over broad refactors. Check the
+	rendered keyboard and focus behavior when changing the board controls.
+
+## Comments and Documentation
+
+Comments in the Python and JavaScript files are intentionally limited to useful
+orientation, such as identifying the in-memory current-game store or grouping the
+button wiring. The function names and tests document most of the behavior directly,
+which keeps comments from becoming stale descriptions of implementation details.
+
+The README documents setup, commands, project behavior, and the role of Copilot
+instructions so a future developer can get started without reverse-engineering the
+repository. Tests provide executable documentation for important contracts, including
+unique puzzle generation, difficulty levels, hints, completion checking, themes,
+timers, scores, and responsive/accessibility-related UI hooks. When behavior changes,
+update the nearest test and the relevant README section together.
+
+## Official GitHub Copilot Documentation
+
+- [Adding repository custom instructions for GitHub Copilot](https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-repository-instructions)
+- [About custom instructions for GitHub Copilot](https://docs.github.com/en/copilot/concepts/prompting/response-customization)
+- [GitHub Copilot documentation](https://docs.github.com/en/copilot)
+
 ## Project Instructions
 
 Use GitHub Copilot to refactor the code for this game to add more advanced features. The goal is to create a more modern and maintainable codebase and add additional functionality to the final product. You can use any combination of code completion and chat features, like Ask, Edit, or Agent modes.

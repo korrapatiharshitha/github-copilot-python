@@ -39,9 +39,14 @@ def check_solution():
     incorrect = []
     for i in range(sudoku_logic.SIZE):
         for j in range(sudoku_logic.SIZE):
-            if board[i][j] != solution[i][j]:
+            if board[i][j] != sudoku_logic.EMPTY and board[i][j] != solution[i][j]:
                 incorrect.append([i, j])
-    return jsonify({'incorrect': incorrect})
+    complete = not incorrect and all(
+        board[i][j] == solution[i][j]
+        for i in range(sudoku_logic.SIZE)
+        for j in range(sudoku_logic.SIZE)
+    )
+    return jsonify({'incorrect': incorrect, 'complete': complete})
 
 @app.route('/hint', methods=['POST'])
 def give_hint():

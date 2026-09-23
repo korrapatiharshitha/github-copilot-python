@@ -90,7 +90,47 @@ def test_check_solution_returns_incorrect_cells():
     response = app.app.test_client().post('/check', json={'board': board})
 
     assert response.status_code == 200
-    assert response.get_json() == {'incorrect': [[0, 0], [4, 4]]}
+    assert response.get_json() == {
+        'incorrect': [[4, 4]],
+        'complete': False,
+    }
+
+
+def test_check_solution_reports_incomplete_board_without_incorrect_entries():
+    app.CURRENT['solution'] = SOLUTION
+    board = [row[:] for row in SOLUTION]
+    board[0][0] = 0
+
+    response = app.app.test_client().post('/check', json={'board': board})
+
+    assert response.status_code == 200
+    assert response.get_json() == {'incorrect': [], 'complete': False}
+
+
+def test_check_solution_does_not_treat_empty_cells_as_successful_completion():
+    app.CURRENT['solution'] = SOLUTION
+    board = [[0] * len(SOLUTION) for _ in SOLUTION]
+
+    response = app.app.test_client().post('/check', json={'board': board})
+
+    assert response.status_code == 200
+    assert response.get_json() == {'incorrect': [], 'complete': False}
+
+
+def test_check_solution_reports_multiple_incorrect_entered_cells():
+    app.CURRENT['solution'] = SOLUTION
+    board = [row[:] for row in SOLUTION]
+    board[0][0] = 1
+    board[1][1] = 8
+    board[2][2] = 1
+
+    response = app.app.test_client().post('/check', json={'board': board})
+
+    assert response.status_code == 200
+    assert response.get_json() == {
+        'incorrect': [[0, 0], [1, 1], [2, 2]],
+        'complete': False,
+    }
 
 
 def test_check_solution_returns_no_incorrect_cells_for_matching_board():
@@ -99,7 +139,7 @@ def test_check_solution_returns_no_incorrect_cells_for_matching_board():
     response = app.app.test_client().post('/check', json={'board': SOLUTION})
 
     assert response.status_code == 200
-    assert response.get_json() == {'incorrect': []}
+    assert response.get_json() == {'incorrect': [], 'complete': True}
 
 
 def test_hint_rejects_request_without_game():
